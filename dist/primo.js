@@ -39,7 +39,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //     "favorites_chunk.js.map",
 //     "fullView_chunk.js.map",
 //     "vendor.js.map"];
-
 // Primo February 2023 Release
 const Parts = ["account_chunk_web_pack_generated.js.map", "almaViewer_chunk_web_pack_generated.js.map", "angular.js.map", "atoz_chunk_web_pack_generated.js.map", "bootstrap_bundle.js.map", "bundle.js.map", "collectionDiscovery_chunk_web_pack_generated.js.map", "favorites_chunk_web_pack_generated.js.map", "fullView_chunk_web_pack_generated.js.map"];
 async function extract(uri, outDir) {
@@ -177,18 +176,20 @@ function dumpTemplates(templatePath, outDir) {
   });
 }
 async function copyFiles(outDir) {
-  (0, _glob.default)(`${outDir}/tmp/**/webapp/components/**`, (er, files) => {
-    files.forEach(f => {
-      try {
-        let copyFile = `${outDir}${_path.default.sep}source${_path.default.sep}www${_path.default.sep}components${f.split(`webapp${_path.default.sep}components`).pop()}`.replace('/', _path.default.sep);
-        _mkdirp.default.sync(_path.default.dirname(copyFile));
-        if (_fs.default.existsSync(f) && _fs.default.lstatSync(f).isFile()) {
-          _fs.default.copyFileSync(f, copyFile);
-        }
-      } catch (e) {
-        console.log(e.message);
+  const files = await (0, _glob.default)(`${outDir}/tmp/**/webapp/components/**`);
+  const count = files.filter(name => name.endsWith('.ts')).length;
+  console.log(`\tFound ${count} Typescript files`);
+  console.log(`\t\tExtracting Sources`);
+  files.forEach(f => {
+    try {
+      let copyFile = `${outDir}${_path.default.sep}source${_path.default.sep}www${_path.default.sep}components${f.split(`webapp${_path.default.sep}components`).pop()}`.replace('/', _path.default.sep);
+      _mkdirp.default.sync(_path.default.dirname(copyFile));
+      if (_fs.default.existsSync(f) && _fs.default.lstatSync(f).isFile()) {
+        _fs.default.copyFileSync(f, copyFile);
       }
-    });
+    } catch (e) {
+      console.log(e.message);
+    }
   });
 }
 var _default = extract;
