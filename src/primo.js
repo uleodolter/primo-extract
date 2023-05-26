@@ -200,19 +200,20 @@ function dumpTemplates(templatePath, outDir) {
 }
 
 async function copyFiles(outDir) {
-    glob(`${outDir}/tmp/**/webapp/components/**`, (er, files) => {
-        files.forEach((f) => {
-            try {
-                let copyFile = `${outDir}${path.sep}source${path.sep}www${path.sep}components${f.split(`webapp${path.sep}components`).pop()}`.replace('/', path.sep);
-                
-                mkdirp.sync(path.dirname(copyFile));
-                if (fs.existsSync(f) && fs.lstatSync(f).isFile()) {
-                    fs.copyFileSync(f, copyFile);
-                }
-            } catch (e) {
-                console.log(e.message);
+    const files = await glob(`${outDir}/tmp/**/webapp/components/**`);
+    const count = files.filter(name => name.endsWith('.ts')).length;
+    console.log(`\tFound ${count} Typescript files`);
+    console.log(`\t\tExtracting Sources`);
+    files.forEach((f) => {
+        try {
+            let copyFile = `${outDir}${path.sep}source${path.sep}www${path.sep}components${f.split(`webapp${path.sep}components`).pop()}`.replace('/', path.sep);
+            mkdirp.sync(path.dirname(copyFile));
+            if (fs.existsSync(f) && fs.lstatSync(f).isFile()) {
+                fs.copyFileSync(f, copyFile);
             }
-        })
+        } catch (e) {
+            console.log(e.message);
+        }
     })
 }
 
